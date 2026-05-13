@@ -1,0 +1,39 @@
+name: Twitter Monitor
+
+on:
+  schedule:
+    # 北京时间 07:00 和 17:00 (UTC 减 8 小时)
+    - cron: '0 23,9 * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install httpx
+
+      - name: Run monitor
+        env:
+          TWITTER_USERS: "@xiaoxiaodong01,@GeekCatX"
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          TWITTER_COOKIE: ${{ secrets.TWITTER_COOKIE }}
+        run: |
+          python src/monitor.py
+
+      - name: Upload data
+        uses: actions/upload-artifact@v4
+        with:
+          name: last-tweet-data
+          path: data/last_tweet.json
+          retention-days: 90
