@@ -155,16 +155,20 @@ async def main():
             print(f"\n{'='*20} {username} {'='*20}")
 
             try:
-                # 获取用户信息
-                user = await api.user_by_login(username)
-                if not user:
+                # 获取用户信息（使用 gather 获取实际数据）
+                print(f"🔍 正在获取用户 {username} 的信息...")
+                users = await gather(api.user_by_login(username))
+
+                if not users:
                     print(f"❌ 用户 {username} 不存在或无法访问")
                     continue
 
+                user = users[0]
                 print(f"✅ 用户 ID: {user.id}")
 
-                # 获取推文
-                tweets = await api.user_tweets(user.id, limit=50)
+                # 获取推文（使用 gather 获取实际数据）
+                print(f"📥 正在获取推文...")
+                tweets = await gather(api.user_tweets(user.id, limit=50))
 
                 # 过滤新推文
                 new_tweets = []
@@ -190,6 +194,8 @@ async def main():
 
             except Exception as e:
                 print(f"❌ 处理用户 {username} 时出错: {e}")
+                import traceback
+                traceback.print_exc()
 
     finally:
         # 保存记录
