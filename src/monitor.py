@@ -158,7 +158,7 @@ async def main():
                 # 获取用户信息（使用 asyncio.wait_for 等待协程完成）
                 print(f"🔍 正在获取用户 {username} 的信息...")
                 task = api.user_by_login(username)
-                user = await asyncio.wait_for(task, timeout=30.0)
+                user = await asyncio.wait_for(task, timeout=60.0)  # 增加超时时间到60秒
                 if not user:
                     print(f"❌ 用户 {username} 不存在或无法访问")
                     continue
