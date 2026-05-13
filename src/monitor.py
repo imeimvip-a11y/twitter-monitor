@@ -155,12 +155,9 @@ async def main():
             print(f"\n{'='*20} {username} {'='*20}")
 
             try:
-                # 获取用户信息（使用 async for 迭代）
+                # 获取用户信息（user_by_login 返回 User 对象）
                 print(f"🔍 正在获取用户 {username} 的信息...")
-                user = None
-                async for u in api.user_by_login(username):
-                    user = u
-                    break
+                user = await api.user_by_login(username)
 
                 if not user:
                     print(f"❌ 用户 {username} 不存在或无法访问")
@@ -168,11 +165,10 @@ async def main():
 
                 print(f"✅ 用户 ID: {user.id}")
 
-                # 获取推文（使用 async for 迭代并收集）
+                # 获取推文（使用 gather 收集数据）
                 print(f"📥 正在获取推文...")
-                tweets = []
-                async for tweet in api.user_tweets(user.id, limit=50):
-                    tweets.append(tweet)
+                from twscrape import gather
+                tweets = await gather(api.user_tweets(user.id, limit=50))
 
                 # 过滤新推文
                 new_tweets = []
