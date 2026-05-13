@@ -73,12 +73,29 @@ def get_user_id(username, client):
         print(f"❌ 获取用户 {username} 主页失败: {resp.status_code}")
         return None
 
-    # 从页面中提取 user_id
-    match = re.search(r'"rest_id":"(\d+)"', resp.text)
-    if match:
-        user_id = match.group(1)
-        print(f"✅ 用户 {username} 的 ID: {user_id}")
-        return user_id
+    # 尝试多种模式提取 user_id
+    patterns = [
+        r'"rest_id":"(\d+)"',
+        r'"rest_id":(\d+)',
+        r'"id":"(\d+)"',
+        r'"screen_name":"' + re.escape(username.lstrip('@')) + r'".*?"rest_id":"(\d+)"'
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, resp.text)
+        if match:
+            user_id = match.group(1)
+            print(f"✅ 用户 {username} 的 ID: {user_id}")
+            return user_id
+
+    # 如果都匹配不到，尝试从重定向的 URL 中提取
+    if resp.history:
+        final_url = str(resp.url)
+        id_match = re.search(r'/i/user/(\d+)', final_url)
+        if id_match:
+            user_id = id_match.group(1)
+            print(f"✅ 用户 {username} 的 ID (从URL): {user_id}")
+            return user_id
 
     print(f"❌ 无法从页面中提取 {username} 的 user_id")
     return None
