@@ -32,7 +32,7 @@ jobs:
 
       - name: Run monitor
         env:
-          TWITTER_USERS: "@xiaoxiaodong01,@GeekCatX"
+          TWITTER_USERS: "@GeekCatX"
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           TWITTER_COOKIE: ${{ secrets.TWITTER_COOKIE }}
         run: |
