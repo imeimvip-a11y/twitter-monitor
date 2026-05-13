@@ -199,33 +199,6 @@ async def main():
                 import traceback
                 traceback.print_exc()
 
-                # 过滤新推文
-                new_tweets = []
-                last_id = last_tweets.get(username, "")
-
-                for tweet in tweets:
-                    tweet_id = str(tweet.id)
-                    if tweet_id != last_id:
-                        new_tweets.append(tweet)
-                    else:
-                        # 遇到已处理的推文，停止
-                        break
-
-                if new_tweets:
-                    print(f"✨ 发现 {len(new_tweets)} 条新推文！")
-                    all_new_tweets[username] = new_tweets
-
-                    # 更新最新推文 ID
-                    if tweets:
-                        last_tweets[username] = str(tweets[0].id)
-                else:
-                    print(f"✅ 没有新推文")
-
-            except Exception as e:
-                print(f"❌ 处理用户 {username} 时出错: {e}")
-                import traceback
-                traceback.print_exc()
-
     finally:
         # 保存记录
         save_last_tweets(last_tweets)
