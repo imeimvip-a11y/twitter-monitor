@@ -15,12 +15,11 @@ import httpx
 
 # ============ 配置 ============
 TWITTER_USERS = os.getenv("TWITTER_USERS", "GeekCatX").split(",")
-FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK", "")
-TWITTER_COOKIE = os.getenv("TWITTER_COOKIE", "")
+# 飞书 Webhook
+FEISHU_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/caf0fd13-524d-467d-b88e-fb422f68d341"
+# Twitter Cookie (直接写在代码里，避免 Secrets 换行问题)
+TWITTER_COOKIE = "guest_id_marketing=v1%3A177806726686150308; guest_id_ads=v1%3A177806726686150308; guest_id=v1%3A177806726686150308; personalization_id=\"v1_K3Zrekgk6LbcZi86vEA1aA==\"; __cuid=e66bb3d2798f47c5b6dc2fd095ed466d; external_referer=padhuUp37zjgzgv1mFWxJ12Ozwit7owX|0|8e8t2xd8A2w%3D; g_state={\"i_l\":0,\"i_ll\":1778121301264,\"i_e\":{\"enable_itp_optimization\":0},\"i_et\":1778121300779}; kdt=lvKaoRd37pvoV01gWZewSiEtCoZweoKiHmd4zqUb; auth_token=7bd200aeb69b19b6e6fdefbfb086e5203a7ce108; ct0=44db67213085a7f2ac6bca454f965f33e41f1de9101183ec6e93fa0eedd5b79774dc09e9d554d4b8fc05d5f4da39e7b93de20b31944a10f31266d84b23719c591f1b0f7f4dedb21d5581bad085fce131; twid=u%3D2051989108877303808; lang=en; __cf_bm=dMzERH9vpLxCjn0nAcq9YQd9a6Huv1NmBYRBe4siRIo-1778600473.0405252-1.0.1.1-aOQVsFVZpxf6dFkZ6rjuGsffX12Sk0gY0aEkNmowqcfBHN9LihK9xLYoRNzXlGukjOTu_2D.oHshPNvx2iL0eyXtxj40f.lX8LKhNmsWbTJHImyiNUVMClKXq3hv0Tz_"
 DATA_FILE = Path("data/last_tweet.json")
-
-# 彻底清理 Cookie（去掉所有换行符和空格）
-TWITTER_COOKIE = ''.join(TWITTER_COOKIE.split()).replace('\n', '').replace('\r', '')
 
 # Twitter API 端点 (GraphQL)
 GRAPHQL_URL = "https://twitter.com/i/api/graphql/jOtTfsr0mvpSYPvm6yUE0A/UserTweets"
