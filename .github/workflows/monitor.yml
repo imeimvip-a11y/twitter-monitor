@@ -30,13 +30,47 @@ jobs:
           name: last-tweet-data
           path: data/
 
+      - name: Test Cookie
+        env:
+          TWITTER_COOKIE: ${{ secrets.TWITTER_COOKIE }}
+        run: |
+          echo "🍪 检查 Cookie 配置..."
+          if [ -z "$TWITTER_COOKIE" ]; then
+            echo "❌ TWITTER_COOKIE 未配置"
+            exit 1
+          fi
+          echo "✅ TWITTER_COOKIE 已配置"
+          echo "📏 Cookie 长度: $(echo -n "$TWITTER_COOKIE" | wc -c) 字符"
+          echo "🔍 检查必要字段..."
+          if echo "$TWITTER_COOKIE" | grep -q "auth_token"; then
+            echo "  ✅ auth_token 存在"
+          else
+            echo "  ❌ auth_token 缺失"
+          fi
+          if echo "$TWITTER_COOKIE" | grep -q "ct0"; then
+            echo "  ✅ ct0 存在"
+          else
+            echo "  ❌ ct0 缺失"
+          fi
+          if echo "$TWITTER_COOKIE" | grep -q "twid"; then
+            echo "  ✅ twid 存在"
+          else
+            echo "  ❌ twid 缺失"
+          fi
+
       - name: Run monitor
         env:
           TWITTER_USERS: "@GeekCatX"
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           TWITTER_COOKIE: ${{ secrets.TWITTER_COOKIE }}
         run: |
+          echo "🚀 开始运行 Twitter 监控..."
+          echo "⏰ 开始时间: $(date)"
+          echo ""
           python src/monitor.py
+          echo ""
+          echo "⏰ 结束时间: $(date)"
+          echo "📊 运行完成"
 
       - name: Upload data
         uses: actions/upload-artifact@v4
