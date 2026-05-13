@@ -21,7 +21,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install git+https://github.com/vladkens/twscrape.git
+          # 使用稳定版本的 twscrape，避免最新版本的 bug
+          pip install twscrape==0.11.10
 
       - name: Download previous data
         uses: actions/download-artifact@v4
