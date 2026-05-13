@@ -21,8 +21,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # 使用稳定版本的 twscrape，避免最新版本的 bug
-          pip install twscrape==0.11.10
+          # 使用更旧版本的 twscrape，避免最新版本的 IndexError bug
+          pip install twscrape==0.10.15
 
       - name: Download previous data
         uses: actions/download-artifact@v4
