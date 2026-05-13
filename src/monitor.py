@@ -138,7 +138,7 @@ async def main():
     last_tweets = load_last_tweets()
     print(f"📂 已加载历史记录")
 
-    # 初始化 API
+    # 初始化 API（传入 pool）
     api = API()
     await api.pool.add_account("cookie_user", "", "", "", cookies=TWITTER_COOKIE)
 
@@ -155,20 +155,49 @@ async def main():
             print(f"\n{'='*20} {username} {'='*20}")
 
             try:
-                # 获取用户信息（user_by_login 返回 User 对象）
+                # 获取用户信息（使用 asyncio.wait_for 等待协程完成）
                 print(f"🔍 正在获取用户 {username} 的信息...")
-                user = await api.user_by_login(username)
-
+                task = api.user_by_login(username)
+                user = await asyncio.wait_for(task, timeout=30.0)
                 if not user:
                     print(f"❌ 用户 {username} 不存在或无法访问")
                     continue
 
                 print(f"✅ 用户 ID: {user.id}")
 
-                # 获取推文（使用 gather 收集数据）
+                # 获取推文（使用 asyncio.wait_for 等待协程完成）
                 print(f"📥 正在获取推文...")
-                from twscrape import gather
-                tweets = await gather(api.user_tweets(user.id, limit=50))
+                task = api.user_tweets(user.id, limit=50)
+                tweets_list = []
+                async for tweet in task:
+                    tweets_list.append(tweet)
+
+                # 过滤新推文
+                new_tweets = []
+                last_id = last_tweets.get(username, "")
+
+                for tweet in tweets_list:
+                    tweet_id = str(tweet.id)
+                    if tweet_id != last_id:
+                        new_tweets.append(tweet)
+                    else:
+                        # 遇到已处理的推文，停止
+                        break
+
+                if new_tweets:
+                    print(f"✨ 发现 {len(new_tweets)} 条新推文！")
+                    all_new_tweets[username] = new_tweets
+
+                    # 更新最新推文 ID
+                    if tweets_list:
+                        last_tweets[username] = str(tweets_list[0].id)
+                else:
+                    print(f"✅ 没有新推文")
+
+            except Exception as e:
+                print(f"❌ 处理用户 {username} 时出错: {e}")
+                import traceback
+                traceback.print_exc()
 
                 # 过滤新推文
                 new_tweets = []
