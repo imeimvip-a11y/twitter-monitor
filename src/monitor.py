@@ -155,20 +155,24 @@ async def main():
             print(f"\n{'='*20} {username} {'='*20}")
 
             try:
-                # 获取用户信息（使用 gather 获取实际数据）
+                # 获取用户信息（使用 async for 迭代）
                 print(f"🔍 正在获取用户 {username} 的信息...")
-                users = await gather(api.user_by_login(username))
+                user = None
+                async for u in api.user_by_login(username):
+                    user = u
+                    break
 
-                if not users:
+                if not user:
                     print(f"❌ 用户 {username} 不存在或无法访问")
                     continue
 
-                user = users[0]
                 print(f"✅ 用户 ID: {user.id}")
 
-                # 获取推文（使用 gather 获取实际数据）
+                # 获取推文（使用 async for 迭代并收集）
                 print(f"📥 正在获取推文...")
-                tweets = await gather(api.user_tweets(user.id, limit=50))
+                tweets = []
+                async for tweet in api.user_tweets(user.id, limit=50):
+                    tweets.append(tweet)
 
                 # 过滤新推文
                 new_tweets = []
