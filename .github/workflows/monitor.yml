@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install httpx
+          pip install git+https://github.com/vladkens/twscrape.git
 
       - name: Download previous data
         uses: actions/download-artifact@v4
