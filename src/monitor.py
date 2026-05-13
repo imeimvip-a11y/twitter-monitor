@@ -14,10 +14,13 @@ from pathlib import Path
 import httpx
 
 # ============ 配置 ============
-TWITTER_USERS = os.getenv("TWITTER_USERS", "@xiaoxiaodong01,@GeekCatX").split(",")
+TWITTER_USERS = os.getenv("TWITTER_USERS", "GeekCatX").split(",")
 FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK", "")
 TWITTER_COOKIE = os.getenv("TWITTER_COOKIE", "")
 DATA_FILE = Path("data/last_tweet.json")
+
+# 清理 Cookie（去掉换行符）
+TWITTER_COOKIE = TWITTER_COOKIE.strip().replace('\n', '').replace('\r', '')
 
 # Twitter API 端点 (GraphQL)
 GRAPHQL_URL = "https://twitter.com/i/api/graphql/jOtTfsr0mvpSYPvm6yUE0A/UserTweets"
